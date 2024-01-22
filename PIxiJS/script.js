@@ -1,8 +1,8 @@
 // Create PixiJS application
 const app = new PIXI.Application({
   background: "#ffffff",
-  width: 1000,
-  height: 800,
+  width: 648,
+  height: 736,
   transparent: true,
 });
 document.getElementById("pixi-container").appendChild(app.view);
@@ -24,6 +24,15 @@ app.stage.addChild(shirt_mockup);
 
 const imageContainer = new PIXI.Container();
 shirt_mockup.addChild(imageContainer);
+
+// Create a new Sprite for the background image
+const bg = PIXI.Sprite.from("./img/in-the-corner.png"); // replace with your background image path
+bg.width = app.screen.width;
+bg.height = app.screen.height;
+app.stage.addChild(bg);
+
+// Ensure the shirt_mockup is on top of the background
+app.stage.setChildIndex(shirt_mockup, app.stage.children.length - 1);
 
 // Function to create a mask based on the shirt mockup
 function createMask(shirtMockup) {
@@ -258,4 +267,21 @@ function onResizeStart(image, event) {
   image.on("pointerupoutside", onResizeEnd);
 }
 
+
+downloadButton.addEventListener('click', function() {
+  // Use the extract plugin to get a blob from the renderer's canvas
+  app.renderer.plugins.extract.canvas(app.stage).toBlob((blob) => {
+    // Create an object URL from the blob
+    const url = URL.createObjectURL(blob);
+
+    // Create a download link
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'image.png';
+    a.click();
+
+    // Release the object URL after the download has started
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }, 'image/png');
+});
 app.start();

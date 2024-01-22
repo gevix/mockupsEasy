@@ -23,37 +23,13 @@ const aspect = container.clientWidth / container.clientHeight;
 const camera = new THREE.OrthographicCamera(-aspect * 2, aspect * 2, 2, -2, 0.1, 51);
 camera.position.z = 50;
 
-// // Add a light
-// const light = new THREE.AmbientLight(0xffffff); // soft white light
-// scene.add(light);
-
-// // Add a point light on the right
-// const pointLight = new THREE.PointLight(0xffffff, 500, 100);
-// pointLight.position.set(18, 9, 21); // adjust the position as needed
-// scene.add(pointLight);
-
-// Get references to the sliders
-const lightSliderX = document.getElementById('light-slider-x');
-const lightSliderY = document.getElementById('light-slider-y');
-const lightSliderZ = document.getElementById('light-slider-z');
-
-// Function to update light position
-function updateLightPosition() {
-  pointLight.position.set(lightSliderX.value, lightSliderY.value, lightSliderZ.value);
-}
-
-// Listen for slider changes
-lightSliderX.addEventListener('input', updateLightPosition);
-lightSliderY.addEventListener('input', updateLightPosition);
-lightSliderZ.addEventListener('input', updateLightPosition);
-
 
 // Create a GLTFLoader
 const loader = new GLTFLoader();
 
 // Load a .glb file
 loader.load(
-  '/public/myScene8.glb', // path to .glb file
+  '/public/myScene13.glb', // path to .glb file
   (gltf) => {
     gltf.scene.traverse((child) => {
       if (child.isMesh && child.name === 'image') { // replace 'ImagePlane' with the actual name of your image plane
@@ -61,7 +37,7 @@ loader.load(
         child.material = new THREE.MeshBasicMaterial({ map: texture });
         if (child.isMesh && child.name === 'geometry') { 
           const texture = child.material.map;
-          child.material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+          child.material = new THREE.MeshStandardMaterial({ map: texture, transparent: true });
         }
       }
     });
@@ -116,16 +92,24 @@ imageUpload.addEventListener('change', function() {
           child.material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
           child.material.opacity = 1; 
           child.material.needsUpdate = true;
+        }if (child.isMesh && child.name === 'shades') {
+          child.material.transparent = true; // Enable transparency
+          child.material.opacity = 0.18; // Set opacity to 50%
+          child.material.needsUpdate = true;
         }
       });
 
 scene.traverse(function (child) {
   if (child.isMesh && child.name === 'mockupArea') {
+    child.material = new THREE.MeshBasicMaterial();
     child.material.color.set(0xdc0a0a); // Set color to red
     child.material.transparent = true; // Enable transparency
     child.material.opacity = 0.5; // Set opacity to 50%
     child.material.needsUpdate = true;
   }
+
+
+
 
 // Get references to the buttons
 const redButton = document.getElementById('red-button');
