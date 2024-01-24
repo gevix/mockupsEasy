@@ -1,8 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { hsvaToHex } from '@uiw/color-convert';
 
-function ThreeJSApp() {
+function ThreeJSApp( {color, changeMockupAreaColor} ) {
   const imageUploadRef = useRef();
   const sceneRef = useRef();
   const rendererRef = useRef();
@@ -10,6 +11,7 @@ function ThreeJSApp() {
   const containerRef = useRef();
 
   useEffect(() => {
+    let animationFrameId;
     const currentImageUpload = imageUploadRef.current;
     const currentContainerRef = containerRef.current;
     const containerWidth = containerRef.current.clientWidth;
@@ -25,7 +27,8 @@ function ThreeJSApp() {
       0.1,
       51
     );
-
+  
+    
     renderer.setSize(containerWidth, containerHeight);
     // Append the renderer's DOM element to the container
     containerRef.current.appendChild(renderer.domElement);
@@ -65,6 +68,7 @@ function ThreeJSApp() {
             }
             if (child.isMesh && child.name === "mockupArea") {
               child.material = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.35 });
+              child.material.color.set(hsvaToHex(color));
             }
           
         });
@@ -77,8 +81,19 @@ function ThreeJSApp() {
       }
     );
 
+    function changeMockupAreaColor(color) {
+      scene.traverse(function (child) {
+        if (child.isMesh && child.name === 'mockupArea') {
+          child.material.color.set(hsvaToHex(color));
+          child.material.needsUpdate = true;
+        }
+      });
+    }
+
+    changeMockupAreaColor(color);
+
     function animate() {
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
       renderer.render(scene, camera);
     }
 
@@ -87,7 +102,7 @@ function ThreeJSApp() {
     // Return a cleanup function that will be called when the component is unmounted or before a new scene is created
     return () => {
       // Stop the animation
-      cancelAnimationFrame(animate);
+      cancelAnimationFrame(animationFrameId);
 
       // Remove the renderer's DOM element from the container
       currentContainerRef.removeChild(renderer.domElement);
@@ -120,7 +135,8 @@ function ThreeJSApp() {
         }
       }
     }
-
+    
+    
     function handleFileUpload() {
       // Ensure a file was selected
       if (this.files && this.files[0]) {
@@ -157,7 +173,7 @@ function ThreeJSApp() {
           scene.traverse(function (child) {
             if (child.isMesh && child.name === "mockupArea") {
               child.material = new THREE.MeshBasicMaterial();
-              child.material.color.set(0xffffff); // Set color to red
+              child.material.color.set(hsvaToHex(color)); // Set color to red
               child.material.transparent = true; // Enable transparency
               child.material.opacity = 0.35; // Set opacity to 50%
               child.material.needsUpdate = true;
@@ -167,9 +183,9 @@ function ThreeJSApp() {
 
         // Read the file as a data URL
         reader.readAsDataURL(this.files[0]);
-      }
+      }      
     }
-  }, []);
+  }, [color, changeMockupAreaColor]);
 
   return (
     <div>

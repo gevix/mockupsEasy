@@ -94,7 +94,7 @@ imageUpload.addEventListener('change', function() {
           child.material.needsUpdate = true;
         }if (child.isMesh && child.name === 'shades') {
           child.material.transparent = true; // Enable transparency
-          child.material.opacity = 0.18; // Set opacity to 50%
+          child.material.opacity = 0.5; // Set opacity to 50%
           child.material.needsUpdate = true;
         }
       });
