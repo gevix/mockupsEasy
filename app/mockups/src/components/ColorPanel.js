@@ -4,8 +4,6 @@ import ShadeSlider from '@uiw/react-color-shade-slider';
 import Block from '@uiw/react-color-block';
 
 
-
-
 function ColorPanel({ hsva, setHsva }) {
   return (
     <Fragment>

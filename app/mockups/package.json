@@ -9,6 +9,7 @@
     "@uiw/react-color-block": "^2.0.6",
     "@uiw/react-color-shade-slider": "^2.0.6",
     "@uiw/react-color-wheel": "^2.0.6",
+    "pixi.js": "^7.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",

@@ -3,16 +3,17 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { hsvaToHex } from '@uiw/color-convert';
 
-function ThreeJSApp( {color, changeMockupAreaColor} ) {
-  const imageUploadRef = useRef();
+function ThreeJSApp( {color}, {textureImage}) {
   const sceneRef = useRef();
   const rendererRef = useRef();
   const cameraRef = useRef();
   const containerRef = useRef();
-
+  const mockupAreaMaterialRef = useRef();
+  const geometryTextureRef = useRef();
+  
   useEffect(() => {
     let animationFrameId;
-    const currentImageUpload = imageUploadRef.current;
+    
     const currentContainerRef = containerRef.current;
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
@@ -33,9 +34,7 @@ function ThreeJSApp( {color, changeMockupAreaColor} ) {
     // Append the renderer's DOM element to the container
     containerRef.current.appendChild(renderer.domElement);
 
-    // Add the event listener
-    currentImageUpload.addEventListener("change", handleFileUpload);
-
+   
     sceneRef.current = scene;
     rendererRef.current = renderer;
     cameraRef.current = camera;
@@ -57,7 +56,13 @@ function ThreeJSApp( {color, changeMockupAreaColor} ) {
             child.material = new THREE.MeshBasicMaterial({ map: texture });
           }
             if (child.isMesh && child.name === "geometry") {
-              child.material = new THREE.MeshBasicMaterial({ visible: false });
+              const texture = new THREE.TextureLoader().load('/textureImage.png');
+              texture.flipY = false;
+              texture.colorSpace = THREE.SRGBColorSpace;
+              child.material = new THREE.MeshBasicMaterial({ map: texture, visible:true });
+              child.material.transparent = true;
+              child.material.opacity = 1;
+              geometryTextureRef.current = texture;
             
             } 
             if (child.isMesh && child.name === "shades") {
@@ -67,8 +72,9 @@ function ThreeJSApp( {color, changeMockupAreaColor} ) {
             
             }
             if (child.isMesh && child.name === "mockupArea") {
-              child.material = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.35 });
-              child.material.color.set(hsvaToHex(color));
+              const material = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.8 });
+              child.material = material;
+              mockupAreaMaterialRef.current = material; 
             }
           
         });
@@ -80,17 +86,6 @@ function ThreeJSApp( {color, changeMockupAreaColor} ) {
         console.error(error);
       }
     );
-
-    function changeMockupAreaColor(color) {
-      scene.traverse(function (child) {
-        if (child.isMesh && child.name === 'mockupArea') {
-          child.material.color.set(hsvaToHex(color));
-          child.material.needsUpdate = true;
-        }
-      });
-    }
-
-    changeMockupAreaColor(color);
 
     function animate() {
       animationFrameId = requestAnimationFrame(animate);
@@ -136,60 +131,28 @@ function ThreeJSApp( {color, changeMockupAreaColor} ) {
       }
     }
     
-    
-    function handleFileUpload() {
-      // Ensure a file was selected
-      if (this.files && this.files[0]) {
-        // Create a FileReader
-        const reader = new FileReader();
+  }, []);
 
-        // When the file is loaded, create a texture and apply it to the object
-        reader.onload = function (e) {
-          // Create a texture
-          const texture = new THREE.TextureLoader().load(e.target.result);
-
-          // Flip the texture vertically
-          texture.flipY = false;
-
-          texture.colorSpace = THREE.SRGBColorSpace;
-
-          // Apply the texture to the object
-          scene.traverse(function (child) {
-            if (child.isMesh && child.name === "geometry") {
-              child.material = new THREE.MeshBasicMaterial({
-                map: texture,
-                transparent: true,
-              });
-              child.material.opacity = 1;
-              child.material.needsUpdate = true;
-            }
-            if (child.isMesh && child.name === "shades") {
-              child.material.transparent = true;
-              child.material.opacity = 0.4; // Set opacity to 50%
-              child.material.needsUpdate = true;
-            }
-          });
-
-          scene.traverse(function (child) {
-            if (child.isMesh && child.name === "mockupArea") {
-              child.material = new THREE.MeshBasicMaterial();
-              child.material.color.set(hsvaToHex(color)); // Set color to red
-              child.material.transparent = true; // Enable transparency
-              child.material.opacity = 0.35; // Set opacity to 50%
-              child.material.needsUpdate = true;
-            }
-          });
-        };
-
-        // Read the file as a data URL
-        reader.readAsDataURL(this.files[0]);
-      }      
+  useEffect(() => {
+    if (mockupAreaMaterialRef.current) {
+      mockupAreaMaterialRef.current.color.set(hsvaToHex(color));
     }
-  }, [color, changeMockupAreaColor]);
+  }, [color]);
+
+useEffect(() => {
+  if (geometryTextureRef.current) {
+    console.log('im here');
+    const texture = new THREE.TextureLoader().load(textureImage);
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    geometryTextureRef.current.map = texture;
+    geometryTextureRef.current.needsUpdate = true;
+    
+  }
+}, [textureImage]);
 
   return (
     <div>
-      <input ref={imageUploadRef} type="file" />
       <div className="threejs-app" ref={containerRef}>
         {/* The Three.js scene will be appended here */}
       </div>

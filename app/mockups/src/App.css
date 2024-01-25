@@ -18,3 +18,9 @@
 .color-panel {
   padding: 10px;
 }
+
+.pixi-js-app {
+  border: 5px dashed #00ff1e;
+  margin-top: 10px;
+  margin-right: 10px;
+}
