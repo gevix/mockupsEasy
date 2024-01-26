@@ -6,7 +6,7 @@ import CenterHorizontallyButton from "./CenterHorizontallyButton";
 import SizeBar from "./SizeBar";
 import AddImageButton from "./AddImageButton";
 
-function ImageEditor({ setTextureImage }) {
+function ImageEditor({ onTextureImage }) {
   const [isCenterVertically, setIsCenterVertically] = useState(true);
   const [isCenterHorizontally, setIsCenterHorizontally] = useState(true);
   const [size, setSize] = useState(50);
@@ -15,13 +15,13 @@ function ImageEditor({ setTextureImage }) {
 
   return (
     <div>
-      <div className = "pixi-js-app">
+      <div>
         <PixiJSApp
           size={size}
           isCenterHorizontally={isCenterHorizontally}
           isCenterVertically={isCenterVertically}
           image={image}
-          setTextureImage={setTextureImage}
+          onTextureImage={onTextureImage}
         />
       </div>
       <div>

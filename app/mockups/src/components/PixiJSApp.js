@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as PIXI from "pixi.js";
 
 function PixiJSApp({
@@ -6,21 +6,41 @@ function PixiJSApp({
   isCenterHorizontally,
   isCenterVertically,
   image,
-  setTextureImage,
+  onTextureImage,
 }) {
   const pixiContainer = useRef(null);
   const imageDesignRef = useRef(null);
+  const [stageImageUrl, setStageImageUrl] = useState(null);
+  const appRef = useRef();
 
   useEffect(() => {
     // Create PixiJS application
     const app = new PIXI.Application({
-      background: "#fff",
-      width: 544,
-      height: 770,
+      background: "#ffffff",
+      width: 648,
+      height: 736,
       transparent: true,
     });
 
-    pixiContainer.current.appendChild(app.view);
+    appRef.current = app;
+
+    // Create a transparent Graphics object
+    const graphics = new PIXI.Graphics();
+    graphics.beginFill(0xffffff, 0); // 0 alpha for full transparency
+    graphics.drawRect(0, 0, app.screen.width, app.screen.height);
+    graphics.endFill();
+
+    // Create a render texture from the Graphics object
+    const renderTexture = app.renderer.generateTexture(graphics);
+
+    // Create a sprite from the render texture
+    const transparentSprite = new PIXI.Sprite(renderTexture);
+
+    // Create a container to hold both sprites
+    const container = new PIXI.Container();
+
+    // Add the transparent sprite to the container
+    container.addChild(transparentSprite);
 
     // Upload image design
     const imageDesign = PIXI.Sprite.from("./img/textureImage.png");
@@ -32,7 +52,7 @@ function PixiJSApp({
     imageDesignRef.current = imageDesign;
 
     // Enable interaction on the sprite
-    imageDesign.interactive = true;
+    imageDesign.eventMode = "dynamic";
     imageDesign.buttonMode = true;
 
     // Add variables to hold the state of dragging
@@ -49,8 +69,6 @@ function PixiJSApp({
       })
       .on("pointerup", () => {
         isDragging = false;
-        const dataUrl = app.renderer.plugins.extract.base64(app.stage);
-        setTextureImage(dataUrl);
       })
       .on("pointerupoutside", () => {
         isDragging = false;
@@ -66,13 +84,20 @@ function PixiJSApp({
         }
       });
 
-    app.stage.addChild(imageDesign);
+    // Add the image design sprite to the container
+    container.addChild(imageDesign);
+
+    // Add the container to the stage
+    app.stage.addChild(container);
+
+    // Append the app view to the container
+    pixiContainer.current.appendChild(app.view);
 
     // Clean up on unmount
     return () => {
       app.destroy(true, { children: true, texture: true, baseTexture: true });
     };
-  }, [setTextureImage]); // Empty dependency array means this effect runs once on mount and clean up on unmount
+  }, []); // Empty dependency array means this effect runs once on mount and clean up on unmount
 
   useEffect(() => {
     // Update PixiJS application size on window resize
@@ -84,16 +109,41 @@ function PixiJSApp({
   }, [isCenterHorizontally]);
 
   useEffect(() => {
-    imageDesignRef.current.y = 400;
+    imageDesignRef.current.y = 368;
   }, [isCenterVertically]);
 
   useEffect(() => {
     if (image) {
       const texture = PIXI.Texture.from(image);
       imageDesignRef.current.texture = texture;
+      appRef.current.render();
     }
   }, [image]);
-  return <div ref={pixiContainer} />;
+
+  const renderStage = () => {
+  // Extract a transparent PNG of the entire app
+  const renderer = appRef.current.renderer;
+  const stage = appRef.current.stage;
+  const extract = renderer.plugins.extract;
+  
+  // Define the area to extract
+  const area = new PIXI.Rectangle(0, 0, appRef.current.screen.width, appRef.current.screen.height);
+  
+  // Extract the area as a canvas
+  const canvas = extract.canvas(stage, area);
+  
+  const dataUrl = canvas.toDataURL("image/png", 1);
+
+  // Set the stage image URL
+  setStageImageUrl(dataUrl);
+};
+  return (
+    <div>
+      <div className="pixi-js-app" ref={pixiContainer} />
+      <button onClick={renderStage}>Render Stage</button>
+      {stageImageUrl && <img src={stageImageUrl} alt="Stage" />}
+    </div>
+  );
 }
 
 export default PixiJSApp;

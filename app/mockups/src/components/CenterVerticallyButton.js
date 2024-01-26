@@ -7,7 +7,7 @@ function CenterVerticallyButton({ setIsCenterVertically }) {
 
   return (
     <button onClick={handleClick}>
-      Center Horizontally
+      Center Vertically
     </button>
   );
 }

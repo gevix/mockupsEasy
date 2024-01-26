@@ -9,10 +9,14 @@ function App() {
   const [hsva, setHsva] = useState({ h: 214, s: 43, v: 90, a: 1 });
   const [textureImage, setTextureImage] = useState(null);
 
+  const handleSetTextureImage = (dataUrl) => {
+    setTextureImage(dataUrl);
+  };
+
   return (
     <div className="container">
       <div>
-       <ImageEditor setTextureImage={setTextureImage}/>
+       <ImageEditor onTextureImage={handleSetTextureImage}/>
         </div>
       <div>
         <ThreeJSApp color = {hsva} textureImage ={textureImage} />
