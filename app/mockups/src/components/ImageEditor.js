@@ -6,7 +6,7 @@ import CenterHorizontallyButton from "./CenterHorizontallyButton";
 import SizeBar from "./SizeBar";
 import AddImageButton from "./AddImageButton";
 
-function ImageEditor({ onTextureImage }) {
+function ImageEditor({ onTextureImageChange }) {
   const [isCenterVertically, setIsCenterVertically] = useState(true);
   const [isCenterHorizontally, setIsCenterHorizontally] = useState(true);
   const [size, setSize] = useState(50);
@@ -21,7 +21,7 @@ function ImageEditor({ onTextureImage }) {
           isCenterHorizontally={isCenterHorizontally}
           isCenterVertically={isCenterVertically}
           image={image}
-          onTextureImage={onTextureImage}
+          onTextureImageChange={onTextureImageChange}
         />
       </div>
       <div>

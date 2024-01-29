@@ -6,7 +6,7 @@ function PixiJSApp({
   isCenterHorizontally,
   isCenterVertically,
   image,
-  onTextureImage,
+  onTextureImageChange,
 }) {
   const pixiContainer = useRef(null);
   const imageDesignRef = useRef(null);
@@ -69,9 +69,11 @@ function PixiJSApp({
       })
       .on("pointerup", () => {
         isDragging = false;
+        renderStage();
       })
       .on("pointerupoutside", () => {
         isDragging = false;
+        renderStage();
       })
       .on("pointermove", (event) => {
         if (isDragging) {
@@ -102,14 +104,17 @@ function PixiJSApp({
   useEffect(() => {
     // Update PixiJS application size on window resize
     imageDesignRef.current.scale.set(size / 100);
+    renderStage();
   }, [size]);
 
   useEffect(() => {
     imageDesignRef.current.x = 324;
+    renderStage();
   }, [isCenterHorizontally]);
 
   useEffect(() => {
     imageDesignRef.current.y = 368;
+    renderStage();
   }, [isCenterVertically]);
 
   useEffect(() => {
@@ -117,31 +122,42 @@ function PixiJSApp({
       const texture = PIXI.Texture.from(image);
       imageDesignRef.current.texture = texture;
       appRef.current.render();
+      renderStage();
     }
   }, [image]);
 
-  const renderStage = () => {
-  // Extract a transparent PNG of the entire app
-  const renderer = appRef.current.renderer;
-  const stage = appRef.current.stage;
-  const extract = renderer.plugins.extract;
-  
-  // Define the area to extract
-  const area = new PIXI.Rectangle(0, 0, appRef.current.screen.width, appRef.current.screen.height);
-  
-  // Extract the area as a canvas
-  const canvas = extract.canvas(stage, area);
-  
-  const dataUrl = canvas.toDataURL("image/png", 1);
+  useEffect(() => {
+    // Call the callback function whenever stageImageUrl changes
+    if (stageImageUrl) {
+      onTextureImageChange(stageImageUrl);
+    }
+  }, [stageImageUrl]);
 
-  // Set the stage image URL
-  setStageImageUrl(dataUrl);
-};
+  const renderStage = () => {
+    // Extract a transparent PNG of the entire app
+    const renderer = appRef.current.renderer;
+    const stage = appRef.current.stage;
+    const extract = renderer.plugins.extract;
+
+    // Define the area to extract
+    const area = new PIXI.Rectangle(
+      0,
+      0,
+      appRef.current.screen.width,
+      appRef.current.screen.height
+    );
+
+    // Extract the area as a canvas
+    const canvas = extract.canvas(stage, area);
+
+    const dataUrl = canvas.toDataURL("image/png", 1);
+
+    // Set the stage image URL
+    setStageImageUrl(dataUrl);
+  };
   return (
     <div>
       <div className="pixi-js-app" ref={pixiContainer} />
-      <button onClick={renderStage}>Render Stage</button>
-      {stageImageUrl && <img src={stageImageUrl} alt="Stage" />}
     </div>
   );
 }

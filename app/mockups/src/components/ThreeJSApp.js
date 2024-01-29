@@ -1,19 +1,19 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { hsvaToHex } from '@uiw/color-convert';
+import { hsvaToHex } from "@uiw/color-convert";
 
-function ThreeJSApp( {color}, {textureImage}) {
+function ThreeJSApp({ color , textureImage }) {
   const sceneRef = useRef();
   const rendererRef = useRef();
   const cameraRef = useRef();
   const containerRef = useRef();
   const mockupAreaMaterialRef = useRef();
   const geometryTextureRef = useRef();
-  
+
   useEffect(() => {
     let animationFrameId;
-    
+
     const currentContainerRef = containerRef.current;
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
@@ -28,13 +28,11 @@ function ThreeJSApp( {color}, {textureImage}) {
       0.1,
       51
     );
-  
-    
+
     renderer.setSize(containerWidth, containerHeight);
     // Append the renderer's DOM element to the container
     containerRef.current.appendChild(renderer.domElement);
 
-   
     sceneRef.current = scene;
     rendererRef.current = renderer;
     cameraRef.current = camera;
@@ -55,28 +53,31 @@ function ThreeJSApp( {color}, {textureImage}) {
             const texture = child.material.map;
             child.material = new THREE.MeshBasicMaterial({ map: texture });
           }
-            if (child.isMesh && child.name === "geometry") {
-              const texture = new THREE.TextureLoader().load('/textureImage.png');
-              texture.flipY = false;
-              texture.colorSpace = THREE.SRGBColorSpace;
-              child.material = new THREE.MeshBasicMaterial({ map: texture, visible:true });
-              child.material.transparent = true;
-              child.material.opacity = 1;
-              geometryTextureRef.current = texture;
-            
-            } 
-            if (child.isMesh && child.name === "shades") {
-              child.material.transparent = true;
-              child.material.opacity = 0.4; // Set opacity to 50%
-              child.material.needsUpdate = true;
-            
-            }
-            if (child.isMesh && child.name === "mockupArea") {
-              const material = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.8 });
-              child.material = material;
-              mockupAreaMaterialRef.current = material; 
-            }
-          
+          if (child.isMesh && child.name === "geometry") {
+            const texture = new THREE.TextureLoader().load("/testImage.png");
+            texture.flipY = false;
+            texture.colorSpace = THREE.SRGBColorSpace;
+            child.material = new THREE.MeshBasicMaterial({
+              map: texture,
+              visible: true,
+            });
+            child.material.transparent = true;
+            child.material.opacity = 1;
+            geometryTextureRef.current = texture;
+          }
+          if (child.isMesh && child.name === "shades") {
+            child.material.transparent = true;
+            child.material.opacity = 0.4; // Set opacity to 50%
+            child.material.needsUpdate = true;
+          }
+          if (child.isMesh && child.name === "mockupArea") {
+            const material = new THREE.MeshBasicMaterial({
+              transparent: true,
+              opacity: 0.8,
+            });
+            child.material = material;
+            mockupAreaMaterialRef.current = material;
+          }
         });
 
         scene.add(gltf.scene);
@@ -130,7 +131,6 @@ function ThreeJSApp( {color}, {textureImage}) {
         }
       }
     }
-    
   }, []);
 
   useEffect(() => {
@@ -140,14 +140,15 @@ function ThreeJSApp( {color}, {textureImage}) {
   }, [color]);
 
 useEffect(() => {
-  if (geometryTextureRef.current) {
-    console.log('im here');
-    const texture = new THREE.TextureLoader().load(textureImage);
-    texture.flipY = false;
-    texture.colorSpace = THREE.SRGBColorSpace;
-    geometryTextureRef.current.map = texture;
-    geometryTextureRef.current.needsUpdate = true;
-    
+  console.log('textureImage:', textureImage); // Log the textureImage
+  if (geometryTextureRef.current && textureImage) {
+    const loader = new THREE.TextureLoader();
+    loader.load(textureImage, function (newTexture) {
+      newTexture.flipY = false;
+      newTexture.colorSpace = THREE.SRGBColorSpace;
+      geometryTextureRef.current.image = newTexture.image;
+      geometryTextureRef.current.needsUpdate = true;
+    });
   }
 }, [textureImage]);
 
