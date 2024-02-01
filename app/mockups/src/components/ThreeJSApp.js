@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { hsvaToHex } from "@uiw/color-convert";
 
-function ThreeJSApp({ color , textureImage }) {
+function ThreeJSApp({ color, textureImage }) {
   const sceneRef = useRef();
   const rendererRef = useRef();
   const cameraRef = useRef();
@@ -139,18 +139,18 @@ function ThreeJSApp({ color , textureImage }) {
     }
   }, [color]);
 
-useEffect(() => {
-  console.log('textureImage:', textureImage); // Log the textureImage
-  if (geometryTextureRef.current && textureImage) {
-    const loader = new THREE.TextureLoader();
-    loader.load(textureImage, function (newTexture) {
-      newTexture.flipY = false;
-      newTexture.colorSpace = THREE.SRGBColorSpace;
-      geometryTextureRef.current.image = newTexture.image;
-      geometryTextureRef.current.needsUpdate = true;
-    });
-  }
-}, [textureImage]);
+  useEffect(() => {
+    console.log("textureImage:", textureImage); // Log the textureImage
+    if (geometryTextureRef.current && textureImage) {
+      const loader = new THREE.TextureLoader();
+      loader.load(textureImage, function (newTexture) {
+        newTexture.flipY = false;
+        newTexture.colorSpace = THREE.SRGBColorSpace;
+        geometryTextureRef.current.image = newTexture.image;
+        geometryTextureRef.current.needsUpdate = true;
+      });
+    }
+  }, [textureImage]);
 
   return (
     <div>
