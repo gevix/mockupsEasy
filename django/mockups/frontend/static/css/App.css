@@ -1,0 +1,12 @@
+/* App.css */
+.container {
+  display: flex;
+}
+
+.threejs-app {
+  width: 40vw;
+  height: 40vw; /* 80% of the viewport height */
+  display: flex;
+}
+
+
