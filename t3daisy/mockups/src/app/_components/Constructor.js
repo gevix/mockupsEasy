@@ -1,11 +1,10 @@
-import './App.css';
 import React, { useState } from 'react';
 import ColorPanel from './ColorPanel';
 import ThreeJSApp from './ThreeJSApp';
 import ImageEditor from './ImageEditor';
 
 
-function App() {
+function Constructor() {
   const [hsva, setHsva] = useState({ h: 214, s: 43, v: 90, a: 1 });
   const [textureImage, setTextureImage] = useState(null);
 
@@ -28,4 +27,4 @@ function App() {
   );
 }
 
-export default App;
+export default Constructor;

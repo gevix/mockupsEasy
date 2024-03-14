@@ -37,7 +37,7 @@ const loader = new GLTFLoader();
 
 // Load a .glb file
 loader.load(
-  "/public/myScene21.glb", // path to .glb file
+  "/public/myScene13.glb", // path to .glb file
   (gltf) => {
     gltf.scene.traverse((child) => {
       if (child.isMesh && child.name === "image") {
