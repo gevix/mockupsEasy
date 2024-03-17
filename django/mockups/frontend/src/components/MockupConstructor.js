@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import ColorPanel from "./ColorPanel";
 import ThreeJSApp from "./ThreeJSApp";
 import ImageEditor from "./ImageEditor";
-import Header from "./Header";
 
 function MockupConstructor() {
   const { slug } = useParams();
@@ -11,6 +10,7 @@ function MockupConstructor() {
   const [notFound, setNotFound] = useState(false);
   const [hsva, setHsva] = useState({ h: 214, s: 43, v: 90, a: 1 });
   const [textureImage, setTextureImage] = useState(null);
+
   const handleSetTexutreImage = (textureImage) => {
     setTextureImage(textureImage);
   };
@@ -37,21 +37,24 @@ function MockupConstructor() {
   return (
     <div className="flex justify-center">
       <div className="w-full p-0">
-        <Header />
         {data && (
           <div className="flex justify-between">
             <div>
               <ImageEditor
                 onTextureImageChange={handleSetTexutreImage}
                 designImage={data.templateImage}
+                templateImage={data.templateImage}
+                imageHeight={data.templateImageHeight}
+                imageWidth={data.templateImageWidth}
               />
             </div>
-            <div>
+            <div className="w-full aspect-w-1 aspect-h-1">
               <ThreeJSApp
                 color={hsva}
                 textureImage={textureImage}
                 glb={data.glb}
-                className="w-full aspect-w-1 aspect-h-1"
+                templateImage={data.templateImage}
+                mockupName={data.name}
               />
             </div>
             <div>

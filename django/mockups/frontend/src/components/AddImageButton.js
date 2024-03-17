@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-import { Button } from "@mui/material";
 
 function AddImageButton({ setImage }) {
   const fileInput = useRef();
@@ -20,16 +19,16 @@ function AddImageButton({ setImage }) {
   };
 
   return (
-    <div className="flex justify-end">
+    <div className="flex">
       <input
         type="file"
         ref={fileInput}
         style={{ display: "none" }}
         onChange={handleFileChange}
       />
-      <Button size="sm" variant="outline" onClick={handleButtonClick}>
+      <button className="btn btn-block btn-primary" onClick={handleButtonClick}>
         Add Image
-      </Button>
+      </button>
     </div>
   );
 }

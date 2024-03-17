@@ -8,7 +8,7 @@ export default function Banner() {
           alt="Banner"
           className="object-cover object-center"
           height="640"
-          src="/placeholder.svg"
+          src="static/images/Banner.png"
           style={{
             aspectRatio: "1920/640",
             objectFit: "cover",
@@ -17,12 +17,11 @@ export default function Banner() {
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 pointer-events-none">
           <div className="grid gap-4 text-center">
-            <h1 className="text-4xl font-semibold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-              Welcome to the Platform
+            <h1 className="text-4xl font-semibold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl drop-shadow-2xl">
+              Transform Your Ideas into Stunning Products!
             </h1>
-            <p className="mx-auto max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-              The all-in-one platform for building, deploying, and collaborating
-              on web apps.
+            <p className="mx-auto max-w-[900px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed drop-shadow-2xl">
+              Unleash Your Creativity with Our Free Mockup Generator
             </p>
           </div>
         </div>

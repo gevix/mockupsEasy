@@ -3,14 +3,14 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { hsvaToHex } from "@uiw/color-convert";
 
-function ThreeJSApp({ color, textureImage, glb }) {
+function ThreeJSApp({ color, textureImage, glb, templateImage, mockupName }) {
   const sceneRef = useRef();
   const rendererRef = useRef();
   const cameraRef = useRef();
   const containerRef = useRef();
   const mockupAreaMaterialRef = useRef();
   const geometryTextureRef = useRef();
-  console.log(glb);
+
   useEffect(() => {
     let animationFrameId;
 
@@ -54,9 +54,7 @@ function ThreeJSApp({ color, textureImage, glb }) {
             child.material = new THREE.MeshBasicMaterial({ map: texture });
           }
           if (child.isMesh && child.name === "geometry") {
-            const texture = new THREE.TextureLoader().load(
-              "http://127.0.0.1:8000/static/images/testImage.png"
-            );
+            const texture = new THREE.TextureLoader().load(textureImage);
             texture.flipY = false;
             texture.colorSpace = THREE.SRGBColorSpace;
             child.material = new THREE.MeshBasicMaterial({
@@ -142,7 +140,7 @@ function ThreeJSApp({ color, textureImage, glb }) {
   }, [color]);
 
   useEffect(() => {
-    console.log("textureImage:", textureImage); // Log the textureImage
+    console.log(textureImage);
     if (geometryTextureRef.current && textureImage) {
       const loader = new THREE.TextureLoader();
       loader.load(textureImage, function (newTexture) {
@@ -154,11 +152,49 @@ function ThreeJSApp({ color, textureImage, glb }) {
     }
   }, [textureImage]);
 
+  const downloadImage = () => {
+    // Set a higher resolution
+
+    const initialWidth = containerRef.current.clientWidth;
+    const initialHeight = containerRef.current.clientHeight;
+
+    const newWidth = 1024;
+    const newHeight = (initialHeight * newWidth) / initialWidth;
+
+    // Resize the renderer
+
+    rendererRef.current.setSize(newWidth, newHeight);
+
+    // Render the scene again with the higher resolution
+
+    // Render the scene
+    rendererRef.current.render(sceneRef.current, cameraRef.current);
+
+    // Convert the rendered frame to a base64-encoded PNG
+    const dataURL = rendererRef.current.domElement.toDataURL("image/png");
+
+    // Create a download link
+    const a = document.createElement("a");
+    a.href = dataURL;
+    a.download = mockupName + ".png";
+
+    // Reset the renderer size to the original dimensions
+
+    rendererRef.current.setSize(initialWidth, initialHeight);
+
+    // Trigger a click event on the download link
+    // Note: This might not work in all browsers due to popup blockers
+    a.click();
+  };
+
   return (
     <div>
       <div className="threejs-app" ref={containerRef}>
         {/* The Three.js scene will be appended here */}
       </div>
+      <button className="btn btn-wide btn-primary" onClick={downloadImage}>
+        Download Image
+      </button>
     </div>
   );
 }

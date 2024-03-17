@@ -7,6 +7,9 @@ function PixiJSApp({
   isCenterVertically,
   image,
   onTextureImageChange,
+  templateImage,
+  imageHeight,
+  imageWidth,
 }) {
   const pixiContainer = useRef(null);
   const imageDesignRef = useRef(null);
@@ -17,8 +20,8 @@ function PixiJSApp({
     // Create PixiJS application
     const app = new PIXI.Application({
       background: "#ffffff",
-      width: 648,
-      height: 736,
+      width: imageWidth,
+      height: imageHeight,
       transparent: true,
     });
 
@@ -43,16 +46,11 @@ function PixiJSApp({
     container.addChild(transparentSprite);
 
     // Upload image design
-    console.log(
-      "image:",
-      "http://127.0.0.1:8000/static/images/textureImage.png"
-    );
-    const imageDesign = PIXI.Sprite.from(
-      "http://127.0.0.1:8000/static/images/textureImage.png"
-    );
+    console.log("image:", templateImage);
+    const imageDesign = PIXI.Sprite.from(templateImage);
     imageDesign.anchor.set(0.5);
-    imageDesign.x = app.screen.width / 2;
-    imageDesign.y = app.screen.height / 2;
+    imageDesign.x = app.screen.width;
+    imageDesign.y = app.screen.height;
 
     // Scale the sprite to half its original size
     imageDesignRef.current = imageDesign;
@@ -114,12 +112,12 @@ function PixiJSApp({
   }, [size]);
 
   useEffect(() => {
-    imageDesignRef.current.x = 324;
+    imageDesignRef.current.x = imageWidth / 2;
     renderStage();
   }, [isCenterHorizontally]);
 
   useEffect(() => {
-    imageDesignRef.current.y = 368;
+    imageDesignRef.current.y = imageHeight / 2;
     renderStage();
   }, [isCenterVertically]);
 

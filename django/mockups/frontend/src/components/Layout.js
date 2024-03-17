@@ -1,10 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@material-ui/core";
-import { CardContent, Card, CardActionArea } from "@material-ui/core";
+import { CardContent, Card, CardActionArea } from "@mui/material";
+
 
 export default function Layout() {
   const [categories, setCategories] = useState([]);
   const [mockups, setMockups] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const handleCategoryClick = async (categorySlug) => {
+    setSelectedCategory(categorySlug);
+    try {
+      const response = await fetch(`/api/category/${categorySlug}`);
+      const jsonData = await response.json();
+      setMockups(jsonData.results);
+    } catch (error) {
+      console.error("Error fetching mockups:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Function to fetch all mockups initially
+    const fetchAllMockups = async () => {
+      try {
+        const response = await fetch("/api/category/allmockups");
+        const jsonData = await response.json();
+        setMockups(jsonData.results);
+      } catch (error) {
+        console.error("Error fetching all mockups:", error);
+      }
+    };
+
+    fetchAllMockups();
+  }, []);
 
   useEffect(() => {
     // Function to fetch data from API
@@ -13,13 +40,8 @@ export default function Layout() {
         const response = await fetch("/api/allcategories");
         const jsonData = await response.json();
         setCategories(jsonData); // Set data to state
-
-        const response1 = await fetch("/api/allmockups");
-        const jsonData1 = await response1.json();
-        const mockupsInfo = jsonData1.results;
-        setMockups(mockupsInfo);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching categories:", error);
       }
     };
 
@@ -35,12 +57,16 @@ export default function Layout() {
             <ul className="mt-2 space-y-1">
               {categories.map((category) => (
                 <li key={category.id}>
-                  <a
-                    className="block hover:bg-gray-200 p-2"
-                    href={category.slug}
+                  <button
+                    onClick={() => handleCategoryClick(category.slug)}
+                    className={`block hover:bg-gray-200 p-2 ${
+                      selectedCategory === category.slug
+                        ? "bg-blue-500 text-white"
+                        : ""
+                    }`}
                   >
                     {category.name}
-                  </a>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -49,28 +75,16 @@ export default function Layout() {
       </nav>
       <main className="flex-1 p-5">
         <h1 className="text-3xl font-bold mb-4">Mockup Templates</h1>
-        <div className="flex flex-wrap gap-4 mb-4 block md:hidden">
-          {categories.map((category) => (
-            <Button
-              className="bg-blue-500 text-white"
-              key={category.id}
-              href={category.slug}
-            >
-              {category.name}
-            </Button>
-          ))}
-        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {mockups.map((mockup) => (
-            <Card className="w-full">
+            <Card key={mockup.id} className="w-full">
               <CardActionArea href={mockup.slug}>
                 <CardContent>
                   <img
-                    key={mockup.id}
                     alt="T-Shirt"
                     className="w-full h-auto mb-2"
                     height="200"
-                    src={mockup.image}
+                    src={mockup.image.replace("upload", "upload/w_500,q_auto")}
                     style={{
                       aspectRatio: "200/200",
                       objectFit: "cover",

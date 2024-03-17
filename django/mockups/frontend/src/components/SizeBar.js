@@ -1,5 +1,4 @@
 import React from "react";
-import { Slider } from "@mui/material";
 
 function SizeBar({ size, setSize }) {
   const handleSizeChange = (event) => {
@@ -7,16 +6,17 @@ function SizeBar({ size, setSize }) {
   };
   console.log(size);
   return (
-    <>
-      <Slider
-        aria-label="Change Size"
-        min={1}
-        max={100}
+    <div className="space-y-4">
+      <h1>Change your image size:</h1>
+      <input
+        type="range"
+        min={0}
+        max="120"
         value={size}
+        className="range"
         onChange={handleSizeChange}
-        valueLabelDisplay="auto"
       />
-    </>
+    </div>
   );
 }
 

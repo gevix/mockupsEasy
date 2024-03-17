@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "@mui/material";
 
 function CenterVerticallyButton({ setIsCenterVertically }) {
   const handleClick = () => {
@@ -7,9 +6,9 @@ function CenterVerticallyButton({ setIsCenterVertically }) {
   };
 
   return (
-    <Button size="sm" onClick={handleClick}>
+    <button className="btn btn-block" onClick={handleClick}>
       Center Vertically
-    </Button>
+    </button>
   );
 }
 

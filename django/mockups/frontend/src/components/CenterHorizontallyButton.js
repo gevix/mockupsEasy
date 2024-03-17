@@ -1,15 +1,14 @@
 import React from "react";
-import { Button } from "@mui/material";
 
 function CenterHorizontallyButton({ setIsCenterHorizontally }) {
   const handleClick = () => {
-    setIsCenterHorizontally(prevState => !prevState);
+    setIsCenterHorizontally((prevState) => !prevState);
   };
 
   return (
-    <Button size="sm" onClick={handleClick}>
+    <button className="btn btn-block" onClick={handleClick}>
       Center Horizontally
-    </Button>
+    </button>
   );
 }
 

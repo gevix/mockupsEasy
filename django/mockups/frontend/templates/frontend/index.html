@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="nord" >
   <head>
+    {% load static %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="{% static "css/output.css" %}" rel="stylesheet">
     <link rel="stylesheet" href="http://127.0.0.1:8000/static/css/App.css">
+    <link rel="icon" type="image/x-icon" href="https://res.cloudinary.com/de3oxkjdt/image/upload/v1710511044/logo_c09ffo.png">
     <title>MockupsEasy</title>
-    {% load static %}
   </head>
   <body>
     <div id="main">

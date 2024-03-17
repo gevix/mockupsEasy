@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import MockupConstructor from "./MockupConstructor";
 import Header from "./Header";
 import Footer from "./Footer";
 import Banner from "./Banner";
 import Layout from "./Layout";
+import MockupConstructorPage from "./MockupConstructorPage";
 import {
   BrowserRouter as Router,
   Switch,
@@ -17,14 +17,14 @@ export default function HomePage() {
     <Router>
       <Switch>
         <Route exact path="/">
-        <div className="max-w-[1260px] mx-auto">
+          <div className="">
             <Header />
             <Banner />
             <Layout />
             <Footer />
           </div>
         </Route>
-        <Route path="/:slug" component={MockupConstructor} />
+        <Route path="/:slug" component={MockupConstructorPage} />
       </Switch>
     </Router>
   );
