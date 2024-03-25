@@ -1,0 +1,7 @@
+/*! https://mths.be/punycode v1.4.1 by @mathias */
+
+/**
+ * @license
+ * Copyright 2010-2023 Three.js Authors
+ * SPDX-License-Identifier: MIT
+ */
